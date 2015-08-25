@@ -284,7 +284,7 @@ func (w *Writer) Write(p []byte) (n int, err error) {
 		Host:       w.hostname,
 		Short:      string(short),
 		Full:       string(full),
-		TimeUnixMs: time.Now().Unix(),
+		TimeUnixMs: time.Now().UnixNano() / 1000000,
 		Level:      6, // info
 		Facility:   w.Facility,
 		File:       file,
