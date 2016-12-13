@@ -187,16 +187,16 @@ func TestExtraData(t *testing.T) {
 	short := "quick"
 	full := short + "\nwith more detail"
 	m := Message{
-		Version:    "1.0",
-		Host:       "fake-host",
-		Short:      string(short),
-		Full:       string(full),
-		TimeUnixMs: time.Now().Unix(),
-		Level:      6, // info
-		Facility:   "writer_test",
-		File:       "writer_test.go",
-		Line:       186,
-		Extra:      extra,
+		Version:  "1.0",
+		Host:     "fake-host",
+		Short:    string(short),
+		Full:     string(full),
+		TimeUnix: float64(time.Now().UnixNano()/1000000) / 1000.,
+		Level:    6, // info
+		Facility: "writer_test",
+		File:     "writer_test.go",
+		Line:     186,
+		Extra:    extra,
 	}
 
 	for _, i := range []CompressType{CompressGzip, CompressZlib} {

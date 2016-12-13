@@ -46,16 +46,16 @@ const (
 // Message represents the contents of the GELF message.  It is gzipped
 // before sending.
 type Message struct {
-	Version    string                 `json:"version"`
-	Host       string                 `json:"host"`
-	Short      string                 `json:"short_message"`
-	Full       string                 `json:"full_message"`
-	TimeUnixMs int64                  `json:"timestamp_ms"`
-	Level      int32                  `json:"level"`
-	Facility   string                 `json:"facility"`
-	File       string                 `json:"file"`
-	Line       int                    `json:"line"`
-	Extra      map[string]interface{} `json:"-"`
+	Version  string                 `json:"version"`
+	Host     string                 `json:"host"`
+	Short    string                 `json:"short_message"`
+	Full     string                 `json:"full_message"`
+	TimeUnix float64                `json:"timestamp"`
+	Level    int32                  `json:"level"`
+	Facility string                 `json:"facility"`
+	File     string                 `json:"file"`
+	Line     int                    `json:"line"`
+	Extra    map[string]interface{} `json:"-"`
 }
 
 type innerMessage Message //against circular (Un)MarshalJSON
@@ -280,16 +280,16 @@ func (w *Writer) Write(p []byte) (n int, err error) {
 	}
 
 	m := Message{
-		Version:    "1.0",
-		Host:       w.hostname,
-		Short:      string(short),
-		Full:       string(full),
-		TimeUnixMs: time.Now().UnixNano() / 1000000,
-		Level:      6, // info
-		Facility:   w.Facility,
-		File:       file,
-		Line:       line,
-		Extra:      map[string]interface{}{},
+		Version:  "1.0",
+		Host:     w.hostname,
+		Short:    string(short),
+		Full:     string(full),
+		TimeUnix: float64(time.Now().UnixNano()/1000000) / 1000.,
+		Level:    6, // info
+		Facility: w.Facility,
+		File:     file,
+		Line:     line,
+		Extra:    map[string]interface{}{},
 	}
 
 	if err = w.WriteMessage(&m); err != nil {
@@ -345,8 +345,8 @@ func (m *Message) UnmarshalJSON(data []byte) error {
 			m.Short = v.(string)
 		case "full_message":
 			m.Full = v.(string)
-		case "timestamp_ms":
-			m.TimeUnixMs = int64(v.(float64))
+		case "timestamp":
+			m.TimeUnix = v.(float64)
 		case "level":
 			m.Level = int32(v.(float64))
 		case "facility":
